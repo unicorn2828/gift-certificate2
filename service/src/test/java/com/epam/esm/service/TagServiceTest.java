@@ -13,16 +13,16 @@ class TagServiceTest {
 
     @Test
     void findTagById() {
-        Mockito.when(tagService.findTagById(TEST_CERTIFICATE_ID)).thenReturn(new TagDto());
-        TagDto actual = tagService.findTagById(TEST_CERTIFICATE_ID);
+        Mockito.when(tagService.findById(TEST_CERTIFICATE_ID)).thenReturn(new TagDto());
+        TagDto actual = tagService.findById(TEST_CERTIFICATE_ID);
         TagDto expected = new TagDto();
         Assertions.assertEquals(actual, expected);
     }
 
     @Test
     void findAllTags() {
-        Mockito.when(tagService.findAllTags()).thenReturn(new TagsDto());
-        TagsDto actual = tagService.findAllTags();
+        Mockito.when(tagService.findAll()).thenReturn(new TagsDto());
+        TagsDto actual = tagService.findAll();
         TagsDto expected = new TagsDto();
         Assertions.assertEquals(actual, expected);
     }

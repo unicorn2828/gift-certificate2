@@ -13,16 +13,16 @@ class CertificateServiceTest {
 
     @Test
     void findCertificateById() {
-        Mockito.when(service.findCertificateById(TEST_CERTIFICATE_ID)).thenReturn(new CertificateDto());
-        CertificateDto actual = service.findCertificateById(TEST_CERTIFICATE_ID);
+        Mockito.when(service.findById(TEST_CERTIFICATE_ID)).thenReturn(new CertificateDto());
+        CertificateDto actual = service.findById(TEST_CERTIFICATE_ID);
         CertificateDto expected = new CertificateDto();
         Assertions.assertEquals(actual, expected);
     }
 
     @Test
     void findAllCertificates() {
-        Mockito.when(service.findAllCertificates()).thenReturn(new CertificatesDto());
-        CertificatesDto actual = service.findAllCertificates();
+        Mockito.when(service.findAll()).thenReturn(new CertificatesDto());
+        CertificatesDto actual = service.findAll();
         CertificatesDto expected = new CertificatesDto();
         Assertions.assertEquals(actual, expected);
     }
