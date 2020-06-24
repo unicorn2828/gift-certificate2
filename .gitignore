@@ -1,0 +1,9 @@
+/repository/build/
+/.gradle/
+/.idea/
+/gradle/
+/lib/
+/service/build/
+/web/build/
+/README.md
+/.gitignore
