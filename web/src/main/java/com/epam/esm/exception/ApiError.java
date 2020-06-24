@@ -7,27 +7,27 @@ import java.util.List;
 
 @Data
 public class ApiError {
-    private String message;
-    private String error;
-    private HttpStatus status;
+    private String errorMessage;
+    private String errorCode;
+    private HttpStatus errorStatus;
     private List<String> errors;
 
-    public ApiError(HttpStatus status, String message, List<String> errors) {
+    public ApiError(HttpStatus errorStatus, String errorMessage, List<String> errors) {
         super();
-        this.status = status;
-        this.message = message;
+        this.errorStatus = errorStatus;
+        this.errorMessage = errorMessage;
         this.errors = errors;
     }
 
-    public ApiError(HttpStatus status, String message, String error) {
+    public ApiError(HttpStatus errorStatus, String errorMessage, String errorCode) {
         super();
-        this.status = status;
-        this.message = message;
-        this.error = error;
+        this.errorStatus = errorStatus;
+        this.errorMessage = errorMessage;
+        this.errorCode = errorCode;
     }
-    public ApiError(String message, String error) {
+    public ApiError(String errorMessage, String errorCode) {
         super();
-        this.message = message;
-        this.error = error;
+        this.errorMessage = errorMessage;
+        this.errorCode = errorCode;
     }
 }

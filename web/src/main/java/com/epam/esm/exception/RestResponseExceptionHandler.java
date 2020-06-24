@@ -60,7 +60,7 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         ApiError apiError = new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE,
                 ex.getLocalizedMessage(), builder.substring(0, builder.length() - 2));
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getErrorStatus());
     }
 
     @Override
@@ -78,7 +78,7 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         ApiError apiError = new ApiError(HttpStatus.METHOD_NOT_ALLOWED,
                 ex.getLocalizedMessage(), builder.toString());
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getErrorStatus());
     }
 
     @Override
@@ -87,7 +87,7 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
 
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getErrorStatus());
     }
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
@@ -99,7 +99,7 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         ApiError apiError =
                 new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getErrorStatus());
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
@@ -113,7 +113,7 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         ApiError apiError =
                 new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getErrorStatus());
     }
 
     @Override
@@ -125,7 +125,7 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         ApiError apiError =
                 new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+                apiError, new HttpHeaders(), apiError.getErrorStatus());
     }
 
     @Override
@@ -145,6 +145,6 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         ApiError apiError =
                 new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
         return handleExceptionInternal(
-                ex, apiError, headers, apiError.getStatus(), request);
+                ex, apiError, headers, apiError.getErrorStatus(), request);
     }
 }

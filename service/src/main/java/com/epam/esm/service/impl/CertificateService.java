@@ -3,15 +3,20 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.CertificatesDto;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.exception.ServiceErrorCode;
+import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.DtoMapper;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Certificates;
+import com.epam.esm.model.Tag;
 import com.epam.esm.repository.ICertificateRepository;
 import com.epam.esm.repository.ITagRepository;
 import com.epam.esm.service.ICertificateService;
 import com.epam.esm.validation.CertificateValidator;
 import com.epam.esm.validation.TagValidator;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +26,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CertificateService implements ICertificateService {
+    static final Logger logger = LogManager.getLogger();
     private final ICertificateRepository certificateRepository;
     private final ITagRepository tagRepository;
     private final DtoMapper dtoMapper;
@@ -62,6 +68,11 @@ public class CertificateService implements ICertificateService {
     @Override
     @Transactional
     public CertificateDto create(CertificateDto certificateDto) {
+        if (certificateDto == null) {
+            ServiceErrorCode errorCode = ServiceErrorCode.CERTIFICATE_IS_NULL;
+            logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
+            throw new ServiceException(errorCode);
+        }
         certificateDto.setCreationDate(LocalDate.now());
         certificateDto.setModificationDate(LocalDate.now());
         CertificateValidator.isCertificate(certificateDto);
@@ -80,17 +91,22 @@ public class CertificateService implements ICertificateService {
     @Override
     @Transactional
     public CertificateDto updateCertificate(CertificateDto certificateDto) {
+        if (certificateDto == null) {
+            ServiceErrorCode errorCode = ServiceErrorCode.CERTIFICATE_IS_NULL;
+            logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
+            throw new ServiceException(errorCode);
+        }
         long id = certificateDto.getId();
-        CertificateValidator.isId(certificateDto.getId());
+        CertificateValidator.isId(id);
         certificateDto.setModificationDate(LocalDate.now());
         CertificateValidator.isCertificate(certificateDto);
         Certificate oldCertificate = certificateRepository.findById(id);
         oldCertificate.setTags(tagRepository.findTagsByCertificateId(id));
+        if (oldCertificate.getTags() != null) {
+            oldCertificate.getTags().forEach(tag -> tagRepository.deleteTagFromTagCertificate(tag.getId()));
+        }
         if (certificateDto.getTags() != null) {
             certificateDto.getTags().forEach(TagValidator::isTag);
-            if (oldCertificate.getTags() != null) {
-                oldCertificate.getTags().forEach(tag -> tagRepository.deleteTagFromTagCertificate(tag.getId()));
-            }
             certificateRepository.updateCertificate(dtoMapper.toCertificate(certificateDto));
             updateTags(certificateDto, id);
         } else {
@@ -103,7 +119,11 @@ public class CertificateService implements ICertificateService {
         for (TagDto tagDto : certificateDto.getTags()) {
             long tagId;
             if (tagRepository.isTagExist(tagDto.getName())) {
-                tagId = tagRepository.findTagByName(tagDto.getName()).get(0).getId();
+                List<Tag> tags = tagRepository.findTagByName(tagDto.getName());
+                tagId = tags.stream()
+                        .filter(tag -> tag.getName().equals(tagDto.getName()))
+                        .findAny()
+                        .orElse(null).getId();
             } else {
                 tagId = tagRepository.create(dtoMapper.toTag(tagDto));
             }

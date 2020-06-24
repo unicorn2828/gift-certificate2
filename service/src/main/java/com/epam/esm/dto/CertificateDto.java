@@ -20,6 +20,6 @@ public class CertificateDto extends AbstractDto{
     private LocalDate creationDate;
     @JsonFormat(pattern = DATE_FORMAT)
     private LocalDate modificationDate;
-    private int duration;
+    private Integer duration;
     private List<TagDto> tags;
 }

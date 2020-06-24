@@ -1,8 +1,10 @@
 package com.epam.esm.validation;
 
 import com.epam.esm.dto.CertificateDto;
-import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.exception.ServiceException;
+import org.junit.After;
 import org.junit.gen5.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -12,38 +14,44 @@ import static org.junit.gen5.api.Assertions.assertTrue;
 
 class CertificateValidatorTest {
     private static final String TEST = "test";
+    private CertificateDto expected;
+
+    @BeforeEach
+    void setUp() {
+        expected = new CertificateDto();
+        expected.setId(1L);
+        expected.setCertificateName(TEST);
+        expected.setDescription(TEST);
+        expected.setPrice(new BigDecimal(0));
+        expected.setCreationDate(LocalDate.now());
+        expected.setModificationDate(LocalDate.now());
+        expected.setDuration(60);
+    }
+
+    @After
+    public void tierDown() {
+        expected = null;
+    }
 
     @Test
     void isCertificate() {
-        CertificateDto certificate = new CertificateDto();
-        certificate.setCertificateName(TEST);
-        certificate.setDescription(TEST);
-        certificate.setPrice(new BigDecimal(0));
-        certificate.setCreationDate(LocalDate.now());
-        certificate.setModificationDate(LocalDate.now());
-        certificate.setDuration(60);
-        boolean actual = CertificateValidator.isCertificate(certificate);
+        boolean actual = CertificateValidator.isCertificate(expected);
         assertTrue(actual);
     }
 
     @Test
     void isCertificateNegativeTestOneFieldNull() {
-        CertificateDto certificate = new CertificateDto();
-        certificate.setCertificateName(null);
-        certificate.setDescription(TEST);
-        certificate.setPrice(new BigDecimal(0));
-        certificate.setCreationDate(LocalDate.now());
-        certificate.setModificationDate(LocalDate.now());
-        certificate.setDuration(60);
-        Assertions.assertThrows(RepositoryException.class, () -> {
-            CertificateValidator.isCertificate(certificate);
+        expected.setCertificateName(null);
+        Assertions.assertThrows(ServiceException.class, () -> {
+            CertificateValidator.isCertificate(expected);
         });
     }
 
     @Test
     void isCertificateNegativeNull() {
-        Assertions.assertThrows(RepositoryException.class, () -> {
-            CertificateValidator.isCertificate(null);
+        expected = null;
+        Assertions.assertThrows(ServiceException.class, () -> {
+            CertificateValidator.isCertificate(expected);
         });
     }
 }

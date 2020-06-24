@@ -1,35 +1,48 @@
 package com.epam.esm.validation;
 
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.exception.ServiceException;
+import org.junit.After;
 import org.junit.gen5.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.gen5.api.Assertions.assertTrue;
 
 class TagValidatorTest {
     private static final String TEST = "test";
+    private TagDto test;
+
+    @BeforeEach
+    void setUp() {
+        test = new TagDto();
+        test.setName(TEST);
+    }
+
+    @After
+    public void tierDown() {
+        test = null;
+    }
 
     @Test
     void isTag() {
-        TagDto test = new TagDto();
-        test.setName(TEST);
         boolean actual = TagValidator.isTag(test);
         assertTrue(actual);
     }
 
     @Test
     void isTagNegative() {
-        TagDto actual = new TagDto();
-        actual.setName(null);
-        Assertions.assertThrows(RepositoryException.class, () -> {
-            TagValidator.isTag(actual);
+        test.setName(null);
+        Assertions.assertThrows(ServiceException.class, () -> {
+            TagValidator.isTag(test);
         });
     }
+
     @Test
     void isTagNegativeNull() {
-               Assertions.assertThrows(RepositoryException.class, () -> {
-            TagValidator.isTag(null);
+        test = null;
+        Assertions.assertThrows(ServiceException.class, () -> {
+            TagValidator.isTag(test);
         });
     }
 }

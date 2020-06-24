@@ -28,7 +28,6 @@ import static com.epam.esm.repository.data.TagRepositoryData.*;
 @RequiredArgsConstructor
 public class TagRepository implements ITagRepository {
     static final Logger logger = LogManager.getLogger();
-    private RepositoryErrorCode errorCode = null;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final ICertificateRepository certificateRepository;
     private final JdbcTemplate jdbcTemplate;
@@ -44,7 +43,7 @@ public class TagRepository implements ITagRepository {
         try {
             return jdbcTemplate.queryForObject(SQL_FIND_TAG_BY_ID, new Object[]{id}, mapper);
         } catch (EmptyResultDataAccessException e) {
-            errorCode = RepositoryErrorCode.TAG_WITH_SUCH_ID_NOT_EXIST;
+            RepositoryErrorCode errorCode = RepositoryErrorCode.TAG_WITH_SUCH_ID_NOT_EXIST;
             logger.error(errorCode.getErrorCode() + " : " + errorCode.getErrorMessage(), e);
             throw new RepositoryException(errorCode);
         }

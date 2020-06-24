@@ -41,7 +41,7 @@ public class CertificateRepository implements ICertificateRepository {
                     new Object[]{id}, mapper);
             return certificate;
         } catch (EmptyResultDataAccessException e) {
-            errorCode = RepositoryErrorCode.CERTIFICATE_NOT_EXIST;
+            errorCode = RepositoryErrorCode.CERTIFICATE_WITH_SUCH_ID_NOT_EXISTS;
             logger.error(errorCode.getErrorCode() + " : " + errorCode.getErrorMessage(), e);
             throw new RepositoryException(errorCode);
         }

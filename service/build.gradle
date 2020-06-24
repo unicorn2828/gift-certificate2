@@ -1,5 +1,7 @@
 dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testCompile group: 'junit', name: 'junit', version: '4.13'
+
     implementation project(':repository')
 }
