@@ -36,14 +36,14 @@ public class CertificateService implements ICertificateService {
     @Override
     public CertificatesDto findAll() {
         Certificates certificates = new Certificates();
-        certificates.setCertificates(certificateRepository.findAllCertificates());
+        certificates.setCertificates(certificateRepository.findAll());
         CertificatesDto certificatesDto = dtoMapper.toCertificatesDto(certificates);
         return certificatesDto;
     }
 
     @Override
     public CertificatesDto findAllCertificatesIncludeTags() {
-        List<Certificate> certificateList = certificateRepository.findAllCertificates();
+        List<Certificate> certificateList = certificateRepository.findAll();
         certificateList.forEach(certificate -> certificate.setTags(tagRepository.
                 findTagsByCertificateId(certificate.getId())));
         Certificates certificates = new Certificates();
@@ -69,10 +69,10 @@ public class CertificateService implements ICertificateService {
         if (certificateDto.getTags() != null) {
             certificateDto.getTags().forEach(tag -> tag.setCertificates(null));
             certificateDto.getTags().forEach(TagValidator::isTag);
-            certificateId = certificateRepository.createCertificate(dtoMapper.toCertificate(certificateDto));
+            certificateId = certificateRepository.create(dtoMapper.toCertificate(certificateDto));
             updateTags(certificateDto, certificateId);
         } else {
-            certificateId = certificateRepository.createCertificate(dtoMapper.toCertificate(certificateDto));
+            certificateId = certificateRepository.create(dtoMapper.toCertificate(certificateDto));
         }
         return findById(certificateId);
     }
@@ -103,7 +103,7 @@ public class CertificateService implements ICertificateService {
         for (TagDto tagDto : certificateDto.getTags()) {
             long tagId;
             if (tagRepository.isTagExist(tagDto.getName())) {
-                tagId = tagRepository.findTagByName(tagDto.getName()).getId();
+                tagId = tagRepository.findTagByName(tagDto.getName()).get(0).getId();
             } else {
                 tagId = tagRepository.create(dtoMapper.toTag(tagDto));
             }

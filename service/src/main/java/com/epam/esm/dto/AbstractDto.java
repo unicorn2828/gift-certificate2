@@ -7,5 +7,5 @@ import java.io.Serializable;
 
 @Data
 @Component
-public class AbstractDto implements Serializable {
+public abstract class AbstractDto implements Serializable {
 }

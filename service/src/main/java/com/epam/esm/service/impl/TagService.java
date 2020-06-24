@@ -2,22 +2,29 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.TagsDto;
+import com.epam.esm.exception.ServiceErrorCode;
+import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.DtoMapper;
 import com.epam.esm.model.Certificates;
+import com.epam.esm.model.Tag;
 import com.epam.esm.model.Tags;
 import com.epam.esm.repository.ICertificateRepository;
 import com.epam.esm.repository.ITagRepository;
 import com.epam.esm.service.ITagService;
 import com.epam.esm.validation.TagValidator;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 @Service("tagService")
 @RequiredArgsConstructor
 public class TagService implements ITagService {
+    static final Logger logger = LogManager.getLogger();
     private static final String PARAM_NAME = "tagName";
     private final ICertificateRepository certificateRepository;
     private final ITagRepository tagRepository;
@@ -43,7 +50,7 @@ public class TagService implements ITagService {
     @Override
     public TagsDto findAll() {
         Tags tags = new Tags();
-        tags.setTags(tagRepository.findAllTags());
+        tags.setTags(tagRepository.findAll());
         TagsDto tagsDto = dtoMapper.toTagsDto(tags);
         tagsDto.getTags().stream().forEach(TagValidator::isTag);
         return tagsDto;
@@ -55,7 +62,11 @@ public class TagService implements ITagService {
         TagValidator.isTag(tagDto);
         long tagId;
         if (tagRepository.isTagExist(tagDto.getName())) {
-            tagId = tagRepository.findTagByName(tagDto.getName()).getId();
+            List<Tag> tags = tagRepository.findTagByName(tagDto.getName());
+            tagId = tags.stream()
+                    .filter(tag -> tag.getName().equals(tagDto.getName()))
+                    .findAny()
+                    .orElse(null).getId();
         } else {
             tagId = tagRepository.create(dtoMapper.toTag(tagDto));
         }
@@ -63,16 +74,16 @@ public class TagService implements ITagService {
     }
 
     @Override
-    public TagDto findTagByName(String tagName) {
+    public TagsDto findTagByName(Map<String, String> allParams) {
+        String tagName = allParams.get(PARAM_NAME);
         TagValidator.isName(tagName);
-        return dtoMapper.toTagDto(tagRepository.findTagByName(tagName));
-    }
-
-    @Override
-    public TagsDto findTagByPartNAme(Map<String, String> allParams) {
-        String partName = allParams.get(PARAM_NAME);
         Tags tags = new Tags();
-        tags.setTags(tagRepository.findByPartName(partName));
+        tags.setTags(tagRepository.findTagByName(tagName));
+        if (tags.getTags().isEmpty()) {
+            ServiceErrorCode errorCode = ServiceErrorCode.TAG_WITH_SUCH_NAME_NOT_EXISTS;
+            logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
+            throw new ServiceException(errorCode);
+        }
         return dtoMapper.toTagsDto(tags);
     }
 

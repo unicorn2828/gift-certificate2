@@ -48,7 +48,7 @@ public class CertificateRepository implements ICertificateRepository {
     }
 
     @Override
-    public List<Certificate> findAllCertificates() {
+    public List<Certificate> findAll() {
         return jdbcTemplate.query(SQL_FIND_ALL_CERTIFICATES, mapper);
     }
 
@@ -81,7 +81,7 @@ public class CertificateRepository implements ICertificateRepository {
     }
 
     @Override
-    public long createCertificate(Certificate certificate) {
+    public long create(Certificate certificate) {
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
                     .prepareStatement(SQL_CREATE_CERTIFICATE, new String[]{ID});

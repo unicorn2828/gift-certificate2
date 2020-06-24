@@ -50,26 +50,9 @@ public class TagRepository implements ITagRepository {
         }
     }
 
-    public List<Tag> findByPartName(String partName) {
-        try {
+    public List<Tag> findTagByName(String partName) {
             SqlParameterSource params = new MapSqlParameterSource(TAG_NAME, partName);
             return namedParameterJdbcTemplate.query(SQL_FUNCTION, params, mapper);
-        } catch (EmptyResultDataAccessException e) {
-            errorCode = RepositoryErrorCode.TAG_WITH_SUCH_NAME_NOT_EXISTS;
-            logger.error(errorCode.getErrorCode() + " : " + errorCode.getErrorMessage(), e);
-            throw new RepositoryException(errorCode);
-        }
-    }
-
-    @Override
-    public Tag findTagByName(String tagName) {
-        try {
-            return jdbcTemplate.queryForObject(SQL_FIND_TAG_BY_NAME, new Object[]{tagName}, mapper);
-        } catch (EmptyResultDataAccessException e) {
-            errorCode = RepositoryErrorCode.TAG_WITH_SUCH_NAME_NOT_EXISTS;
-            logger.error(errorCode.getErrorCode() + " : " + errorCode.getErrorMessage(), e);
-            throw new RepositoryException(errorCode);
-        }
     }
 
     @Override
@@ -78,7 +61,7 @@ public class TagRepository implements ITagRepository {
     }
 
     @Override
-    public List<Tag> findAllTags() {
+    public List<Tag> findAll() {
         return jdbcTemplate.query(SQL_FIND_ALL_TAGS, mapper);
     }
 

@@ -9,30 +9,7 @@ import java.util.List;
  *
  * @author Vitaly Kononov
  */
-public interface ICertificateRepository {
-
-    /**
-     * This method removes a certificate from database by id
-     *
-     * @param id - id of certificate
-     * @return {link void}
-     */
-    void delete(long id);
-
-    /**
-     * This method finds a certificate in database by id
-     *
-     * @param id - id of certificate
-     * @return {link} Certificate
-     */
-    Certificate findById(long id);
-
-    /**
-     * This method finds all certificates in database
-     *
-     * @return {link} List of certificates
-     */
-    List<Certificate> findAllCertificates();
+public interface ICertificateRepository extends IBaseRepository<Certificate>{
 
     /**
      * This method finds certificates in database by id of the tag
@@ -58,14 +35,6 @@ public interface ICertificateRepository {
      * @return {link void}
      */
     void addTagCertificate(long tagId, long certificateId);
-
-    /**
-     * This method adds new certificate to db
-     *
-     * @param certificate - new certificate
-     * @return {link} id of certificate
-     */
-    long createCertificate(Certificate certificate);
 
     /**
      * This method injects ITagRepository entity to certificate repository

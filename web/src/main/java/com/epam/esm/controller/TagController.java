@@ -79,24 +79,12 @@ public class TagController {
     /**
      * This method finds a tag in database by part name
      *
-     * @param name - name of tag
-     * @return {link} TagDTO
-     */
-    @GetMapping(value = "/name/{name}")
-    @ResponseStatus(HttpStatus.OK)
-    public TagDto findTagByName(@PathVariable("name") final String name) {
-        return tagService.findTagByName(name);
-    }
-
-    /**
-     * This method finds a tag in database by part name
-     *
-     * @param allParams - name or name's part of tag
+     * @param allParams
      * @return {link} TagDTO
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public TagsDto findAllCertificates(@RequestParam Map<String, String> allParams) {
-        return tagService.findTagByPartNAme(allParams);
+    public TagsDto findTagByName(@RequestParam Map<String, String> allParams) {
+        return tagService.findTagByName(allParams);
     }
 }

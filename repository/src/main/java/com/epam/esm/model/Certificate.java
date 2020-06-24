@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class Certificate {
+public class Certificate extends BaseModel {
     private long id;
     private String certificateName;
     private String description;

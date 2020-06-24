@@ -24,16 +24,8 @@ public interface ITagService extends IBaseService<TagDto, TagsDto> {
     /**
      * This method finds a tag by name
      *
-     * @param tagName - name of tag
+     * @param allParams - name of tag
      * @return {link} TagDTO
      */
-    TagDto findTagByName(String tagName);
-
-    /**
-     * This method finds a tag by part of name
-     *
-     * @param allParams - tag name part
-     * @return {link} TagsDTO
-     */
-    TagsDto findTagByPartNAme(Map<String, String> allParams);
+    TagsDto findTagByName(Map<String, String> allParams);
 }
