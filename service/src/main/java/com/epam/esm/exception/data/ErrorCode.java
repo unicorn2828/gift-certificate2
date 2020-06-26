@@ -17,6 +17,7 @@ public class ErrorCode {
     public static final String ERROR_000031 = "000031";
     public static final String ERROR_000032 = "000032";
     public static final String ERROR_000033 = "000033";
+    public static final String ERROR_000034 = "000034";
     public static final String ERROR_000040 = "000040";
     public static final String ERROR_000041 = "000041";
     public static final String ERROR_000042 = "000042";
@@ -30,6 +31,7 @@ public class ErrorCode {
     public static final String ERROR_000070 = "000070";
     public static final String ERROR_000071 = "000071";
     public static final String ERROR_000072 = "000072";
+    public static final String ERROR_000100 = "000100";
 
     private ErrorCode() {
     }

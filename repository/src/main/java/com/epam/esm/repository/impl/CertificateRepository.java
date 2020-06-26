@@ -35,6 +35,12 @@ public class CertificateRepository implements ICertificateRepository {
     private final KeyHolder keyHolder;
 
     @Override
+    public List<Certificate> findByName(String name) {
+        SqlParameterSource params = new MapSqlParameterSource(CERTIFICATE_NAME, name);
+        return namedParameterJdbcTemplate.query(SQL_CERTIFICATE_NAME_FUNCTION, params, mapper);
+    }
+
+    @Override
     public Certificate findById(long id) throws RepositoryException {
         try {
             Certificate certificate = jdbcTemplate.queryForObject(SQL_FIND_CERTIFICATE_BY_ID,

@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/certificates", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,8 +35,8 @@ public class CertificateController {
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public CertificatesDto findAllCertificates() {
-        return certificateService.findAll();
+    public CertificatesDto findAllCertificates(@RequestParam Map<String, String> allParams) {
+        return certificateService.findAll(allParams);
     }
 
     /**

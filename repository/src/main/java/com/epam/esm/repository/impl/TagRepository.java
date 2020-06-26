@@ -48,10 +48,10 @@ public class TagRepository implements ITagRepository {
             throw new RepositoryException(errorCode);
         }
     }
-
-    public List<Tag> findTagByName(String partName) {
-            SqlParameterSource params = new MapSqlParameterSource(TAG_NAME, partName);
-            return namedParameterJdbcTemplate.query(SQL_FUNCTION, params, mapper);
+    @Override
+    public List<Tag> findByName(String name) {
+            SqlParameterSource params = new MapSqlParameterSource(TAG_NAME, name);
+            return namedParameterJdbcTemplate.query(SQL_TAG_NAME_FUNCTION, params, mapper);
     }
 
     @Override

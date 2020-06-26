@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TagService implements ITagService {
     static final Logger logger = LogManager.getLogger();
-    private static final String PARAM_NAME = "tagName";
+    private static final String PARAM_TAG_NAME = "tagName";
     private final ICertificateRepository certificateRepository;
     private final ITagRepository tagRepository;
     private final DtoMapper dtoMapper;
@@ -48,11 +48,16 @@ public class TagService implements ITagService {
     }
 
     @Override
-    public TagsDto findAll() {
-        Tags tags = new Tags();
-        tags.setTags(tagRepository.findAll());
-        TagsDto tagsDto = dtoMapper.toTagsDto(tags);
-        tagsDto.getTags().stream().forEach(TagValidator::isTag);
+    public TagsDto findAll(Map<String, String> allParams) {
+        TagsDto tagsDto;
+        if (allParams.isEmpty()) {
+            Tags tags = new Tags();
+            tags.setTags(tagRepository.findAll());
+            tagsDto = dtoMapper.toTagsDto(tags);
+        } else {
+            String tagName = allParams.get(PARAM_TAG_NAME);
+            tagsDto = findByName(tagName);
+        }
         return tagsDto;
     }
 
@@ -62,7 +67,7 @@ public class TagService implements ITagService {
         TagValidator.isTag(tagDto);
         long tagId;
         if (tagRepository.isTagExist(tagDto.getName())) {
-            List<Tag> tags = tagRepository.findTagByName(tagDto.getName());
+            List<Tag> tags = tagRepository.findByName(tagDto.getName());
             tagId = tags.stream()
                     .filter(tag -> tag.getName().equals(tagDto.getName()))
                     .findAny()
@@ -74,24 +79,32 @@ public class TagService implements ITagService {
     }
 
     @Override
-    public TagsDto findTagByName(Map<String, String> allParams) {
-        String tagName = allParams.get(PARAM_NAME);
+    @Transactional
+    public void removeById(long id) {
+        TagValidator.isId(id);
+        tagRepository.findById(id);
+        tagRepository.delete(id);
+    }
+
+    @Override
+    public TagsDto findAllTagsIncludeCertificates() {
+        List<Tag> tagList = tagRepository.findAll();
+        tagList.forEach(tag -> tag.setCertificates(certificateRepository.findCertificatesByTagId(tag.getId())));
+        Tags tags = new Tags();
+        tags.setTags(tagList);
+        return dtoMapper.toTagsDto(tags);
+    }
+
+    @Override
+    public TagsDto findByName(String tagName) {
         TagValidator.isName(tagName);
         Tags tags = new Tags();
-        tags.setTags(tagRepository.findTagByName(tagName));
+        tags.setTags(tagRepository.findByName(tagName));
         if (tags.getTags().isEmpty()) {
             ServiceErrorCode errorCode = ServiceErrorCode.TAG_WITH_SUCH_NAME_NOT_EXISTS;
             logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
             throw new ServiceException(errorCode);
         }
         return dtoMapper.toTagsDto(tags);
-    }
-
-    @Override
-    @Transactional
-    public void removeById(long id) {
-        TagValidator.isId(id);
-        tagRepository.findById(id);
-        tagRepository.delete(id);
     }
 }

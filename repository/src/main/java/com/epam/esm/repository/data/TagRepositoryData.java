@@ -11,7 +11,7 @@ public class TagRepositoryData {
     public static final String SQL_FIND_TAGS_BY_CERTIFICATE_ID =
             "SELECT tag.id, tag.tag_name FROM tag INNER JOIN tag_certificate ON tag.id = tag_id WHERE certificate_id = :certificate_id";
     public static final String CERTIFICATE_ID = "certificate_id";
-    public static final String SQL_DELETE_TAG_FROM_TAG_CERTIFICATE = "DELETE FROM tag_certificate WHERE tag_id = ?";
+    public static final String SQL_DELETE_TAG_FROM_TAG_CERTIFICATE = "DELETE FROM tag_certificate WHERE certificate_id = ?";
     public static final String SQL_CHECK_ROW_EXISTS = "SELECT count(*) FROM tag WHERE tag_name = ?";
-    public static final String SQL_FUNCTION = "SELECT id, tag_name FROM searchName3(:tag_name)";
+    public static final String SQL_TAG_NAME_FUNCTION = "SELECT id, tag_name FROM searchName3(:tag_name) ORDER BY id DESC";
 }

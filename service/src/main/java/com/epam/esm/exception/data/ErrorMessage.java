@@ -17,6 +17,7 @@ public class ErrorMessage {
     public static final String ERROR_000031 = "certificate name is empty";
     public static final String ERROR_000032 = "certificate name more than 30";
     public static final String ERROR_000033 = "certificate name less than 3";
+    public static final String ERROR_000034 = "certificate with such name not exists";
     public static final String ERROR_000040 = "certificate description is null";
     public static final String ERROR_000041 = "certificate description less than 3";
     public static final String ERROR_000042 = "certificate description more than 500";
@@ -30,6 +31,7 @@ public class ErrorMessage {
     public static final String ERROR_000070 = "certificate duration less than 1";
     public static final String ERROR_000071 = "certificate duration more than 365";
     public static final String ERROR_000072 = "certificate duration is null";
+    public static final String ERROR_000100 = "unknown parameter";
 
     private ErrorMessage() {
     }

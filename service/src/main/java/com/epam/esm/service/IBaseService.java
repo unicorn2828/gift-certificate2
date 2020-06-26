@@ -2,6 +2,8 @@ package com.epam.esm.service;
 
 import com.epam.esm.dto.AbstractDto;
 
+import java.util.Map;
+
 public interface IBaseService<T extends AbstractDto, T1 extends AbstractDto>{
 
     /**
@@ -34,5 +36,5 @@ public interface IBaseService<T extends AbstractDto, T1 extends AbstractDto>{
      *
      * @return {link} list of abstractDto
      */
-    T1 findAll();
+    T1 findAll(Map<String, String> allParams);
 }

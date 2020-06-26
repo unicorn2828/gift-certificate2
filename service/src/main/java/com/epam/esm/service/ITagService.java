@@ -3,8 +3,6 @@ package com.epam.esm.service;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.TagsDto;
 
-import java.util.Map;
-
 /**
  * The ITagService interface
  *
@@ -22,10 +20,17 @@ public interface ITagService extends IBaseService<TagDto, TagsDto> {
     TagDto findTagByIdIncludeCertificates(long id);
 
     /**
+     * This method finds all tags include certificates field
+     *
+     * @return {link} TagsDTO
+     */
+    TagsDto findAllTagsIncludeCertificates();
+
+    /**
      * This method finds a tag by name
      *
-     * @param allParams - name of tag
+     * @param tagName - name of tag
      * @return {link} TagDTO
      */
-    TagsDto findTagByName(Map<String, String> allParams);
+    TagsDto findByName(String tagName);
 }

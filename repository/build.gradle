@@ -1,7 +1,4 @@
 dependencies {
     implementation "com.zaxxer:HikariCP:${hikariVersion}"
     implementation "org.postgresql:postgresql:${postgresqlVersion}"
-    testImplementation "org.springframework:spring-test:5.2.7.RELEASE"
-    testImplementation "org.junit.platform:junit-platform-runner:1.2.0"
-    testImplementation "org.mockito:mockito-all:1.8.4"
 }

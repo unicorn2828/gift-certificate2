@@ -20,6 +20,13 @@ public interface IBaseRepository<T> {
     void delete(long id);
 
     /**
+     * This method finds all models in database
+     *
+     * @return {link} List of models
+     */
+    List<T> findAll();
+
+    /**
      * This method finds a model in db by id
      *
      * @param id - id of model
@@ -28,9 +35,10 @@ public interface IBaseRepository<T> {
     T findById(long id);
 
     /**
-     * This method finds all models in database
+     * This method finds a tag in db by name
      *
+     * @param name - name
      * @return {link} List of models
      */
-    List<T> findAll();
+    List<T> findByName(String name);
 }

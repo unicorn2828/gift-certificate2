@@ -41,16 +41,27 @@ public class TagController {
     }
 
     /**
-     * This method finds all tags in database
+     * This method finds a tag in database by part name
+     *
+     * @param allParams
+     * @return {link} TagDTO
+     */
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public TagsDto findAllTags(@RequestParam Map<String, String> allParams) {
+        return tagService.findAll(allParams);
+    }
+
+    /**
+     * This method finds all tags include certificates
      *
      * @return {link} TagsDTO
      */
-    @GetMapping(value = "/")
+    @GetMapping(value = "/certificates")
     @ResponseStatus(HttpStatus.OK)
-    public TagsDto findAllTags() {
-        return tagService.findAll();
+    public TagsDto findAllTagsIncludeCertificates() {
+        return tagService.findAllTagsIncludeCertificates();
     }
-
     /**
      * THis method creates a new tag
      *
@@ -74,17 +85,5 @@ public class TagController {
     @ResponseStatus(HttpStatus.OK)
     public void removeTagById(@PathVariable("id") final Long id) {
         tagService.removeById(id);
-    }
-
-    /**
-     * This method finds a tag in database by part name
-     *
-     * @param allParams
-     * @return {link} TagDTO
-     */
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public TagsDto findTagByName(@RequestParam Map<String, String> allParams) {
-        return tagService.findTagByName(allParams);
     }
 }

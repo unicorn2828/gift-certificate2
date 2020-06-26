@@ -30,14 +30,6 @@ public interface ITagRepository extends IBaseRepository<Tag> {
     boolean isTagExist(String tagName);
 
     /**
-     * This method finds a tag in db by name
-     *
-     * @param tagName - name of tag
-     * @return {link} Tag
-     */
-    List<Tag> findTagByName(String tagName);
-
-    /**
      * This method finds a tag by certificate id
      *
      * @param id - id of certificate
