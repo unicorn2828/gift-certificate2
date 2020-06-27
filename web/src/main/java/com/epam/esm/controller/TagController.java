@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:8070")
 @RequestMapping(value = "/tags", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class TagController {
     private final ITagService tagService;
@@ -84,6 +86,6 @@ public class TagController {
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void removeTagById(@PathVariable("id") final Long id) {
-        tagService.removeById(id);
+        tagService.delete(id);
     }
 }

@@ -23,5 +23,5 @@ public interface ICertificateService extends IBaseService<CertificateDto, Certif
      * @param certificateDto - the certificate to update
      * @return {link} certificate after updating
      */
-    CertificateDto updateCertificate(CertificateDto certificateDto);
+    CertificateDto updateCertificate(CertificateDto certificateDto, Long id);
 }

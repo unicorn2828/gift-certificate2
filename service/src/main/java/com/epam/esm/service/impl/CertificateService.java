@@ -3,7 +3,6 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.CertificatesDto;
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.TagsDto;
 import com.epam.esm.exception.ServiceErrorCode;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.mapper.DtoMapper;
@@ -46,21 +45,28 @@ public class CertificateService implements ICertificateService {
 
     @Override
     public CertificatesDto findAll(Map<String, String> allParams) {
-        CertificatesDto certificatesDto;
+        CertificatesDto certificatesDto = null;
         if (allParams.isEmpty()) {
             Certificates certificates = new Certificates();
             certificates.setCertificates(certificateRepository.findAll());
             certificatesDto = dtoMapper.toCertificatesDto(certificates);
-        } else if (allParams.containsKey(PARAM_CERTIFICATE_NAME)) {
-            String certificateName = allParams.get(PARAM_CERTIFICATE_NAME);
-            certificatesDto = findByName(certificateName);
-        } else if (allParams.containsKey(PARAM_TAG_NAME)) {
-            String tagName = allParams.get(PARAM_TAG_NAME);
-            certificatesDto = findByTagId(tagName);
         } else {
-            ServiceErrorCode errorCode = ServiceErrorCode.UNKNOWN_PARAMETER;
-            logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
-            throw new ServiceException(errorCode);
+            for (String param : allParams.keySet()) {
+                switch (param) {
+                    case PARAM_CERTIFICATE_NAME:
+                        String certificateName = allParams.get(param);
+                        certificatesDto = findByName(certificateName);
+                        break;
+                    case PARAM_TAG_NAME:
+                        String tagName = allParams.get(param);
+                        certificatesDto = findByTagId(tagName);
+                        break;
+                    default:
+                        ServiceErrorCode errorCode = ServiceErrorCode.UNKNOWN_PARAMETER;
+                        logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
+                        throw new ServiceException(errorCode);
+                }
+            }
         }
         return certificatesDto;
     }
@@ -77,7 +83,7 @@ public class CertificateService implements ICertificateService {
 
     @Override
     @Transactional
-    public void removeById(long id) {
+    public void delete(long id) {
         CertificateValidator.isId(id);
         certificateRepository.findById(id);
         certificateRepository.delete(id);
@@ -86,20 +92,16 @@ public class CertificateService implements ICertificateService {
     @Override
     @Transactional
     public CertificateDto create(CertificateDto certificateDto) {
-        if (certificateDto == null) {
-            ServiceErrorCode errorCode = ServiceErrorCode.CERTIFICATE_IS_NULL;
-            logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
-            throw new ServiceException(errorCode);
-        }
+        CertificateValidator.isCertificate(certificateDto);
         certificateDto.setCreationDate(LocalDate.now());
         certificateDto.setModificationDate(LocalDate.now());
-        CertificateValidator.isCertificate(certificateDto);
+        CertificateValidator.isDate(certificateDto.getCreationDate(), certificateDto.getModificationDate());
         long certificateId;
         if (certificateDto.getTags() != null) {
             certificateDto.getTags().forEach(tag -> tag.setCertificates(null));
             certificateDto.getTags().forEach(TagValidator::isTag);
             certificateId = certificateRepository.create(dtoMapper.toCertificate(certificateDto));
-            updateTags(certificateDto, certificateId);
+            updateTagsOfCertificate(certificateDto, certificateId);
         } else {
             certificateId = certificateRepository.create(dtoMapper.toCertificate(certificateDto));
         }
@@ -108,32 +110,41 @@ public class CertificateService implements ICertificateService {
 
     @Override
     @Transactional
-    public CertificateDto updateCertificate(CertificateDto certificateDto) {
-        if (certificateDto == null) {
-            ServiceErrorCode errorCode = ServiceErrorCode.CERTIFICATE_IS_NULL;
-            logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
-            throw new ServiceException(errorCode);
-        }
-        long id = certificateDto.getId();
+    public CertificateDto updateCertificate(CertificateDto certificateDto, Long id) {
         CertificateValidator.isId(id);
-        certificateDto.setModificationDate(LocalDate.now());
+        certificateDto.setId(id);
         CertificateValidator.isCertificate(certificateDto);
+        certificateDto.setModificationDate(LocalDate.now());
+        CertificateValidator.isDate(certificateDto.getCreationDate(), certificateDto.getModificationDate());
         Certificate oldCertificate = certificateRepository.findById(id);
         oldCertificate.setTags(tagRepository.findTagsByCertificateId(id));
+        oldCertificate.getTags().forEach(tag -> tagRepository.deleteTagFromTagCertificate(id));
         if (certificateDto.getTags() != null) {
             certificateDto.getTags().forEach(TagValidator::isTag);
             tagRepository.deleteTagFromTagCertificate(certificateDto.getId());
-            //oldCertificate.getTags().forEach(tag -> tagRepository.deleteTagFromTagCertificate(tag.getId()));
-
             certificateRepository.updateCertificate(dtoMapper.toCertificate(certificateDto));
-            updateTags(certificateDto, id);
+            updateTagsOfCertificate(certificateDto, id);
         } else {
             certificateRepository.updateCertificate(dtoMapper.toCertificate(certificateDto));
         }
         return findById(id);
     }
 
-    private CertificatesDto findByName(String certificateName) {
+    @Transactional
+    public void updateTagsOfCertificate(CertificateDto certificateDto, long id) {
+        for (TagDto tagDto : certificateDto.getTags()) {
+            long tagId;
+            if (tagRepository.isTagExist(tagDto.getName())) {
+                tagId = tagService.findTagIdByTagName(tagDto.getName());
+            } else {
+                tagId = tagRepository.create(dtoMapper.toTag(tagDto));
+            }
+            certificateRepository.addTagCertificate(tagId, id);
+        }
+    }
+
+    @Override
+    public CertificatesDto findByName(String certificateName) {
         CertificateValidator.isName(certificateName);
         Certificates certificates = new Certificates();
         certificates.setCertificates(certificateRepository.findByName(certificateName));
@@ -146,38 +157,9 @@ public class CertificateService implements ICertificateService {
     }
 
     private CertificatesDto findByTagId(String tagName) {
-        System.out.println(tagName);
-        long id = findTagIdByTagName(tagName);
+        long tagId = tagService.findTagIdByTagName(tagName);
         Certificates certificates = new Certificates();
-        certificates.setCertificates(certificateRepository.findCertificatesByTagId(id));
+        certificates.setCertificates(certificateRepository.findCertificatesByTagId(tagId));
         return dtoMapper.toCertificatesDto(certificates);
-    }
-
-    private long findTagIdByTagName(String tagName) {
-        TagValidator.isName(tagName);
-        if (tagRepository.isTagExist(tagName)) {
-            TagsDto tagsDto = tagService.findByName(tagName);
-            return tagsDto.getTags()
-                    .stream()
-                    .filter(tag -> tag.getName().equals(tagName))
-                    .findAny()
-                    .orElse(null).getId();
-        } else {
-            ServiceErrorCode errorCode = ServiceErrorCode.TAG_WITH_SUCH_NAME_NOT_EXISTS;
-            logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
-            throw new ServiceException(errorCode);
-        }
-    }
-
-    private void updateTags(CertificateDto certificateDto, long id) {
-        for (TagDto tagDto : certificateDto.getTags()) {
-            long tagId;
-            if (tagRepository.isTagExist(tagDto.getName())) {
-                tagId = findTagIdByTagName(tagDto.getName());
-            } else {
-                tagId = tagRepository.create(dtoMapper.toTag(tagDto));
-            }
-            certificateRepository.addTagCertificate(tagId, id);
-        }
     }
 }

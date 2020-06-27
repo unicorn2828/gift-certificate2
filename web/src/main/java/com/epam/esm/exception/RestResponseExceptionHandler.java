@@ -84,23 +84,21 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(
             NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
-
-        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), error);
+        String errorMessage = "unknown URL, no method found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
+        String errorCode = "404";
+        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, errorMessage, errorCode);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getErrorStatus());
     }
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(
-            MethodArgumentTypeMismatchException ex, WebRequest request) {
-        String error =
-                ex.getName() + " should be of type " + ex.getRequiredType().getName();
-
-        ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getErrorStatus());
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ApiError customHandle(MethodArgumentTypeMismatchException ex) {
+        String errorMessage = ex.getName() + " should be of type " + ex.getRequiredType().getName();
+        String errorCode = "400";
+        ApiError apiError = new ApiError(errorMessage, errorCode);
+        return apiError;
     }
+
 
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraintViolation(

@@ -27,10 +27,10 @@ public interface ITagService extends IBaseService<TagDto, TagsDto> {
     TagsDto findAllTagsIncludeCertificates();
 
     /**
-     * This method finds a tag by name
+     * This method finds a tag id by tag name
      *
      * @param tagName - name of tag
-     * @return {link} TagDTO
+     * @return {link} long - id of tag
      */
-    TagsDto findByName(String tagName);
+    long findTagIdByTagName(String tagName);
 }

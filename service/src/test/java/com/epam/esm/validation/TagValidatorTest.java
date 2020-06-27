@@ -2,8 +2,8 @@ package com.epam.esm.validation;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.ServiceException;
-import org.junit.After;
 import org.junit.gen5.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ class TagValidatorTest {
         test.setName(TEST);
     }
 
-    @After
+    @AfterEach
     public void tierDown() {
         test = null;
     }

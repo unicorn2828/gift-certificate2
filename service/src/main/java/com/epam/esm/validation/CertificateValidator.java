@@ -29,7 +29,6 @@ public class CertificateValidator {
         CertificateValidator.isName(certificate.getCertificateName());
         CertificateValidator.isDescription(certificate.getDescription());
         CertificateValidator.isPrice(certificate.getPrice());
-        CertificateValidator.isDate(certificate.getCreationDate(), certificate.getModificationDate());
         CertificateValidator.isDuration(certificate.getDuration());
         if (certificate.getTags() != null) {
             certificate.getTags().stream().allMatch(TagValidator::isTag);
@@ -89,7 +88,7 @@ public class CertificateValidator {
         } else if (price.compareTo(new BigDecimal(MAX_PRICE)) > 0) {
             errorCode = CERTIFICATE_PRICE_MORE_THAN_100;
         } else if (price.compareTo(new BigDecimal(MIN_PRICE)) < 0) {
-            errorCode = CERTIFICATE_PRICE_LESS_THAN_0;
+            errorCode = CERTIFICATE_PRICE_LESS_THAN_1;
         }
         if (errorCode != null) {
             CertificateValidator.throwError(errorCode);
@@ -97,7 +96,7 @@ public class CertificateValidator {
         return true;
     }
 
-    private static boolean isDate(LocalDate creationDate, LocalDate modificationDate) throws ServiceException {
+    public static boolean isDate(LocalDate creationDate, LocalDate modificationDate) throws ServiceException {
         ServiceErrorCode errorCode = null;
         if (creationDate == null) {
             errorCode = DATE_CREATION_IS_NULL;

@@ -21,7 +21,7 @@ public class ErrorMessage {
     public static final String ERROR_000040 = "certificate description is null";
     public static final String ERROR_000041 = "certificate description less than 3";
     public static final String ERROR_000042 = "certificate description more than 500";
-    public static final String ERROR_000050 = "certificate price less than 0";
+    public static final String ERROR_000050 = "certificate price less than 1";
     public static final String ERROR_000051 = "certificate price more than 100";
     public static final String ERROR_000052 = "certificate price is null";
     public static final String ERROR_000060 = "certificate date of creation is null";

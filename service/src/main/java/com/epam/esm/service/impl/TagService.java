@@ -55,8 +55,14 @@ public class TagService implements ITagService {
             tags.setTags(tagRepository.findAll());
             tagsDto = dtoMapper.toTagsDto(tags);
         } else {
-            String tagName = allParams.get(PARAM_TAG_NAME);
-            tagsDto = findByName(tagName);
+            if (allParams.containsKey(PARAM_TAG_NAME)) {
+                String tagName = allParams.get(PARAM_TAG_NAME);
+                tagsDto = findByName(tagName);
+            } else {
+                ServiceErrorCode errorCode = ServiceErrorCode.UNKNOWN_PARAMETER;
+                logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
+                throw new ServiceException(errorCode);
+            }
         }
         return tagsDto;
     }
@@ -80,7 +86,7 @@ public class TagService implements ITagService {
 
     @Override
     @Transactional
-    public void removeById(long id) {
+    public void delete(long id) {
         TagValidator.isId(id);
         tagRepository.findById(id);
         tagRepository.delete(id);
@@ -106,5 +112,21 @@ public class TagService implements ITagService {
             throw new ServiceException(errorCode);
         }
         return dtoMapper.toTagsDto(tags);
+    }
+
+    public long findTagIdByTagName(String tagName) {
+        TagValidator.isName(tagName);
+        if (tagRepository.isTagExist(tagName)) {
+            TagsDto tagsDto = findByName(tagName);
+            return tagsDto.getTags()
+                    .stream()
+                    .filter(tag -> tag.getName().equals(tagName))
+                    .findAny()
+                    .orElse(null).getId();
+        } else {
+            ServiceErrorCode errorCode = ServiceErrorCode.TAG_WITH_SUCH_NAME_NOT_EXISTS;
+            logger.error(errorCode.getErrorCode() + ":" + errorCode.getErrorMessage());
+            throw new ServiceException(errorCode);
+        }
     }
 }

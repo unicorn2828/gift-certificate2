@@ -12,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:8070")
 @RequestMapping(value = "/certificates", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class CertificateController {
     private final ICertificateService certificateService;
@@ -59,7 +60,7 @@ public class CertificateController {
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void removeCertificateById(@PathVariable("id") final Long id) {
-        certificateService.removeById(id);
+        certificateService.delete(id);
     }
 
     /**
@@ -85,7 +86,6 @@ public class CertificateController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CertificateDto updateCertificate(@PathVariable("id") final Long id, @RequestBody(required = false) final CertificateDto certificateDto) {
-        certificateDto.setId(id);
-        return certificateService.updateCertificate(certificateDto);
+        return certificateService.updateCertificate(certificateDto, id);
     }
 }

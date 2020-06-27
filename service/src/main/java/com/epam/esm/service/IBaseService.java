@@ -26,10 +26,9 @@ public interface IBaseService<T extends AbstractDto, T1 extends AbstractDto>{
      * This method removes by id
      *
      * @param id - id
-     * @param id - id
      * @return {link void}
      */
-    void removeById(final long id);
+    void delete(final long id);
 
     /**
      * This method finds all entities
@@ -37,4 +36,12 @@ public interface IBaseService<T extends AbstractDto, T1 extends AbstractDto>{
      * @return {link} list of abstractDto
      */
     T1 findAll(Map<String, String> allParams);
+
+    /**
+     * This method finds an entity by name
+     *
+     * @param name - name of entity
+     * @return {link} dto
+     */
+    T1 findByName(String name);
 }
