@@ -4,7 +4,6 @@ import com.epam.esm.exception.RepositoryErrorCode;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.mapper.TagRowMapper;
 import com.epam.esm.model.Tag;
-import com.epam.esm.repository.ICertificateRepository;
 import com.epam.esm.repository.ITagRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +17,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.sql.PreparedStatement;
 import java.util.List;
 
@@ -29,14 +27,8 @@ import static com.epam.esm.repository.data.TagRepositoryData.*;
 public class TagRepository implements ITagRepository {
     static final Logger logger = LogManager.getLogger();
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final ICertificateRepository certificateRepository;
     private final JdbcTemplate jdbcTemplate;
     private final TagRowMapper mapper;
-
-    @PostConstruct
-    public void init() {
-        certificateRepository.setTagRepository(this);
-    }
 
     @Override
     public Tag findById(long id) {

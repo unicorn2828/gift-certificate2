@@ -5,7 +5,6 @@ import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.mapper.CertificateRowMapper;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.repository.ICertificateRepository;
-import com.epam.esm.repository.ITagRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +30,6 @@ public class CertificateRepository implements ICertificateRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final CertificateRowMapper mapper;
     private final JdbcTemplate jdbcTemplate;
-    private ITagRepository tagRepository;
     private final KeyHolder keyHolder;
 
     @Override
@@ -100,10 +98,5 @@ public class CertificateRepository implements ICertificateRepository {
             return ps;
         }, keyHolder);
         return (long) keyHolder.getKey();
-    }
-
-    @Override
-    public void setTagRepository(ITagRepository tagRepository) {
-        this.tagRepository = tagRepository;
     }
 }

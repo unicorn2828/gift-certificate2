@@ -1,13 +1,5 @@
 dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoJUnitVersion}"
     testImplementation "org.junit:junit5-engine:${junit5Version}"
-    testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.2')
-    testImplementation('org.junit.jupiter:junit-jupiter-engine:5.4.2')
-    testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.7.0-M1'
-    compile group: 'org.jooq', name: 'jooq', version: '3.13.2'
-
-
     implementation project(':repository')
 }

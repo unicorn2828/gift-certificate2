@@ -35,12 +35,4 @@ public interface ICertificateRepository extends IBaseRepository<Certificate>{
      * @return {link void}
      */
     void addTagCertificate(long tagId, long certificateId);
-
-    /**
-     * This method injects ITagRepository entity to certificate repository
-     *
-     * @param tagRepository - ITagRepository entity
-     * @return {link void}
-     */
-    void setTagRepository(ITagRepository tagRepository);
 }

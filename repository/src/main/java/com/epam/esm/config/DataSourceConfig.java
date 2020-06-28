@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -14,6 +15,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 @Configuration
 @PropertySource("classpath:connection.properties")
+@ComponentScan("com.epam.esm")
 @RequiredArgsConstructor
 public class DataSourceConfig {
     private static final String DB_URL = "db.url";
